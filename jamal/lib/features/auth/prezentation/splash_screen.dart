@@ -1,10 +1,11 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../../../core/app_fonts.dart';
 import 'package:jamal/features/auth/prezentation/register.dart';
 import '../../home/presentation/home_page.dart';
 import '../../../core/user_session.dart';
+import '../../../core/app_localizations.dart';
 
 const Color _primaryPink = Color(0xFFFF6F91);
 
@@ -67,6 +68,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: _primaryPink,
       body: Stack(
@@ -97,7 +99,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                         transform: Matrix4.identity()
                           ..translate(_translateAnim.value, 20.0) // O'ngga va pastga surish
                           ..rotateZ(_rotationAnim.value), // 15 gradusga aylantirish
-                        child: _buildImageCard('assets/ss.png'),
+                        child: _buildImageCard('assets/face.png'),
                       ),
                       
                       // 3-karta: Markazda (Oldinda)
@@ -105,7 +107,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                         alignment: Alignment.bottomCenter,
                         transform: Matrix4.identity()
                           ..translate(0.0, -20.0 * _controller.value), // Biroz yuqoriga ko'tarish
-                        child: _buildImageCard('assets/ii.png'),
+                        child: _buildImageCard('assets/image.png'),
                       ),
                     ],
                   ),
@@ -122,7 +124,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
               children: [
                 Text(
                   'Jamal',
-                  style: GoogleFonts.plusJakartaSans(
+                  style: AppFonts.plusJakartaSans(
                     fontSize: 48,
                     fontWeight: FontWeight.w900,
                     color: Colors.white,
@@ -130,8 +132,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Professional parvarish endi yaqinroq',
-                  style: GoogleFonts.plusJakartaSans(
+                  t.translate('splash_tagline'),
+                  style: AppFonts.plusJakartaSans(
                     fontSize: 20,
                     fontWeight: FontWeight.w900,
                     color: Colors.white,
@@ -182,3 +184,4 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     );
   }
 }
+

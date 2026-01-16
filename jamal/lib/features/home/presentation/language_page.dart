@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../../../core/app_fonts.dart';
 import '../../../core/app_localizations.dart';
 import '../../../core/user_session.dart';
 
@@ -9,18 +9,19 @@ class LanguagePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: isDark ? Colors.black : Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, color: Colors.black),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: isDark ? Colors.white : Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           t.translate('app_language'),
-          style: GoogleFonts.plusJakartaSans(color: Colors.black, fontWeight: FontWeight.w700),
+          style: AppFonts.plusJakartaSans(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.w700),
         ),
         centerTitle: true,
       ),
@@ -31,9 +32,9 @@ class LanguagePage extends StatelessWidget {
             padding: const EdgeInsets.all(20),
             children: [
               _buildLanguageItem(context, 'O\'zbekcha', 'uz', locale.languageCode == 'uz'),
-              _buildLanguageItem(context, 'Русский', 'ru', locale.languageCode == 'ru'),
+              _buildLanguageItem(context, '\u0420\u0443\u0441\u0441\u043a\u0438\u0439', 'ru', locale.languageCode == 'ru'),
               _buildLanguageItem(context, 'English', 'en', locale.languageCode == 'en'),
-              _buildLanguageItem(context, 'العربية', 'ar', locale.languageCode == 'ar'),
+              _buildLanguageItem(context, '\u0627\u0644\u0639\u0631\u0628\u064a\u0629', 'ar', locale.languageCode == 'ar'),
             ],
           );
         },
@@ -53,7 +54,7 @@ class LanguagePage extends StatelessWidget {
       child: ListTile(
         title: Text(
           name,
-          style: GoogleFonts.plusJakartaSans(
+          style: AppFonts.plusJakartaSans(
             fontWeight: FontWeight.w600,
             color: isSelected ? const Color(0xFFFF6F91) : Colors.black87,
           ),

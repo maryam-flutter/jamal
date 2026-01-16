@@ -1,9 +1,15 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:io';
+import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../../../core/app_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../core/app_localizations.dart';
+import '../../../core/favorites_store.dart';
 import '../../../core/user_session.dart';
+import '../data/salon_repository.dart';
+import '../data/salon_store.dart';
+import 'all_salons_page.dart';
 import 'salon_detail_page.dart';
 
 const Color _primaryPink = Color(0xFFFF6F91);
@@ -22,9 +28,9 @@ class _HomeContentPageState extends State<HomeContentPage> {
   File? _profileImage;
 
   final List<String> _sliderImages = [
-    'assets/ww.png',
-    'assets/kelin.png',
-    'assets/mak.png',
+    'assets/beauty.png',
+    'assets/qween.png',
+    'assets/ooo.png',
   ];
 
   @override
@@ -65,90 +71,90 @@ class _HomeContentPageState extends State<HomeContentPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Mock data
-    final List<Map<String, dynamic>> salons = [
-      {'name': 'Glow Beauty Salon', 'address': 'Toshkent, Mirzo Ulugbek', 'rating': 4.8, 'image': 'assets/salon.png'},
-      {'name': 'Luxe Hair Studio', 'address': 'Toshkent, Chilonzor', 'rating': 4.6, 'image': 'assets/beauty.png'},
-      {'name': 'Elegance Nails', 'address': 'Toshkent, Yunusobod', 'rating': 4.7, 'image': 'assets/ooo.png'},
-      {'name': 'Aura Spa', 'address': 'Toshkent, Shayxontohur', 'rating': 4.5, 'image': 'assets/gg.png'},
-    ];
+    final t = AppLocalizations.of(context)!;
+    final userName = UserSession().userName ?? t.translate('user_default');
 
     return SafeArea(
       child: Column(
         children: [
           // Top black header with app name, user name and avatar
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [_primaryPink, Color(0xFFFF9FB0)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: const BorderRadius.vertical(bottom: Radius.circular(32)),
-              boxShadow: [
-                BoxShadow(
-                  color: _primaryPink.withOpacity(0.4),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
+          ClipRRect(
+            borderRadius: const BorderRadius.vertical(bottom: Radius.circular(32)),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFFFFF6F8), Color(0xFFFFC8D3), Color(0xFFFFFFFF)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: _primaryPink.withOpacity(0.25),
+                      blurRadius: 22,
+                      offset: const Offset(0, 12),
+                    ),
+                  ],
+                  border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.5), width: 1)),
                 ),
-              ],
-              border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.2), width: 1)),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Salom, ${UserSession().userName ?? "Dilbar"}! 👋',
-                        style: GoogleFonts.plusJakartaSans(
-                          textStyle: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 22,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 0.5,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${t.translate('home_greeting')}, $userName!',
+                            style: AppFonts.plusJakartaSans(
+                              textStyle: const TextStyle(
+                                color: Colors.black87,
+                                fontSize: 22,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 0.4,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        'Bugun o\'zingizga vaqt ajrating',
-                        style: GoogleFonts.plusJakartaSans(
-                          textStyle: TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 14, fontWeight: FontWeight.w500),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white.withOpacity(0.5), width: 2),
-                    boxShadow: [
-                      BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 12, spreadRadius: 2),
-                    ],
-                  ),
-                  child: CircleAvatar(
-                    radius: 26,
-                    backgroundColor: Colors.white,
-                    child: ClipOval(
-                      child: _profileImage != null
-                          ? Image.file(_profileImage!, width: 52, height: 52, fit: BoxFit.cover)
-                          : Image.asset(
-                              'assets/images/profile.png',
-                        width: 52,
-                        height: 52,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => const Icon(Icons.person, size: 28, color: Colors.white),
+                          const SizedBox(height: 6),
+                          Text(
+                            t.translate('home_take_time'),
+                            style: AppFonts.plusJakartaSans(
+                              textStyle: TextStyle(color: Colors.black.withOpacity(0.55), fontSize: 14, fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
+                    Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white.withOpacity(0.7), width: 2),
+                        boxShadow: [
+                          BoxShadow(color: Colors.black.withOpacity(0.12), blurRadius: 12, spreadRadius: 1),
+                        ],
+                      ),
+                      child: CircleAvatar(
+                        radius: 26,
+                        backgroundColor: Colors.white,
+                        child: ClipOval(
+                          child: _profileImage != null
+                              ? Image.file(_profileImage!, width: 52, height: 52, fit: BoxFit.cover)
+                              : Image.asset(
+                                  'assets/images/profile.png',
+                                  width: 52,
+                                  height: 52,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) => const Icon(Icons.person, size: 28, color: Colors.white),
+                                ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
 
@@ -211,8 +217,8 @@ class _HomeContentPageState extends State<HomeContentPage> {
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Text(
-                                      'Chegirma -${(i + 1) * 10}%',
-                                      style: GoogleFonts.plusJakartaSans(
+                                      '${t.translate('home_discount')} -${(i + 1) * 10}%',
+                                      style: AppFonts.plusJakartaSans(
                                         color: Colors.white,
                                         fontWeight: FontWeight.w700,
                                         fontSize: 12,
@@ -221,8 +227,10 @@ class _HomeContentPageState extends State<HomeContentPage> {
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    i == 0 ? 'Yozgi parvarish' : (i == 1 ? 'Kelinlar uchun maxsus' : 'Dam olish kunlari'),
-                                    style: GoogleFonts.plusJakartaSans(
+                                    i == 0
+                                        ? t.translate('home_promo_summer')
+                                        : (i == 1 ? t.translate('home_promo_bride') : t.translate('home_promo_weekend')),
+                                    style: AppFonts.plusJakartaSans(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w800,
                                       fontSize: 18,
@@ -256,23 +264,40 @@ class _HomeContentPageState extends State<HomeContentPage> {
                 const SizedBox(height: 20),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: _SectionHeader(title: 'Salonlar roʻyxati', onSeeAll: () {}),
+                  child: _SectionHeader(
+                    title: t.translate('home_salons_title'),
+                    seeAllLabel: t.translate('home_see_all'),
+                    onSeeAll: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const AllSalonsPage()));
+                    },
+                  ),
                 ),
                 const SizedBox(height: 8),
                 // Grid view of salons
                 Expanded(
-                  child: GridView.builder(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 12,
-                      mainAxisSpacing: 12,
-                      childAspectRatio: 0.78,
-                    ),
-                    itemCount: salons.length,
-                    itemBuilder: (context, index) {
-                      final s = salons[index];
-                      return _SalonCard(salon: s);
+                  child: ValueListenableBuilder<List<Salon>>(
+                    valueListenable: SalonStore().remoteSalons,
+                    builder: (context, remoteSalons, child) {
+                      return ValueListenableBuilder<List<Salon>>(
+                        valueListenable: SalonStore().salons,
+                        builder: (context, customSalons, child) {
+                          final salons = [...customSalons, ...remoteSalons];
+                          return GridView.builder(
+                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
+                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 12,
+                              mainAxisSpacing: 12,
+                              childAspectRatio: 0.78,
+                            ),
+                            itemCount: salons.length,
+                            itemBuilder: (context, index) {
+                              final s = salons[index];
+                              return _SalonCard(salon: s);
+                            },
+                          );
+                        },
+                      );
                     },
                   ),
                 ),
@@ -287,9 +312,10 @@ class _HomeContentPageState extends State<HomeContentPage> {
 
 class _SectionHeader extends StatelessWidget {
   final String title;
+  final String seeAllLabel;
   final VoidCallback onSeeAll;
 
-  const _SectionHeader({Key? key, required this.title, required this.onSeeAll}) : super(key: key);
+  const _SectionHeader({Key? key, required this.title, required this.seeAllLabel, required this.onSeeAll}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -298,7 +324,7 @@ class _SectionHeader extends StatelessWidget {
       children: [
         Text(
           title,
-          style: GoogleFonts.plusJakartaSans(
+          style: AppFonts.plusJakartaSans(
             textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: Colors.black),
           ),
         ),
@@ -310,8 +336,8 @@ class _SectionHeader extends StatelessWidget {
             child: Row(
               children: [
                 Text(
-                  'Barchasi',
-                  style: GoogleFonts.plusJakartaSans(
+                  seeAllLabel,
+                  style: AppFonts.plusJakartaSans(
                     textStyle: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
@@ -331,15 +357,16 @@ class _SectionHeader extends StatelessWidget {
 }
 
 class _SalonCard extends StatelessWidget {
-  final Map<String, dynamic> salon;
+  final Salon salon;
 
   const _SalonCard({Key? key, required this.salon}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final name = salon['name'] as String;
+    final t = AppLocalizations.of(context)!;
+    final name = t.translate(salon.name);
     // Simulation of a longer name for visual variety
-    final title = name.length > 15 ? '$name - Professional Services' : name;
+    final title = name.length > 15 ? '$name - ${t.translate('home_professional_services')}' : name;
 
     return InkWell(
       onTap: () {
@@ -351,11 +378,7 @@ class _SalonCard extends StatelessWidget {
         child: Stack(
           children: [
             Positioned.fill(
-              child: Image.asset(
-                salon['image'],
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Container(color: Colors.grey[300]),
-              ),
+              child: _buildSalonImage(salon.image),
             ),
             Positioned.fill(
               child: Container(
@@ -381,7 +404,7 @@ class _SalonCard extends StatelessWidget {
                   children: [
                     const Icon(Icons.star, color: Colors.amber, size: 14),
                     const SizedBox(width: 6),
-                    Text((salon['rating'] as double).toString(),
+                    Text(salon.rating.toString(),
                         style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12)),
                   ],
                 ),
@@ -394,7 +417,21 @@ class _SalonCard extends StatelessWidget {
                 width: 34,
                 height: 34,
                 decoration: const BoxDecoration(color: Colors.white70, shape: BoxShape.circle),
-                child: const Icon(Icons.favorite_border, size: 18, color: Colors.black54),
+                child: ValueListenableBuilder<Set<String>>(
+                  valueListenable: FavoritesStore().favorites,
+                  builder: (context, favorites, child) {
+                    final isFavorite = favorites.contains(salon.id);
+                    return InkWell(
+                      onTap: () => FavoritesStore().toggleFavorite(salon.id),
+                      borderRadius: BorderRadius.circular(20),
+                      child: Icon(
+                        isFavorite ? Icons.favorite : Icons.favorite_border,
+                        size: 18,
+                        color: isFavorite ? _primaryPink : Colors.black54,
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
             Positioned(
@@ -408,14 +445,14 @@ class _SalonCard extends StatelessWidget {
                     title,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.plusJakartaSans(
+                    style: AppFonts.plusJakartaSans(
                       textStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 14),
                     ),
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    '\$${((salon['rating'] as double) * 1.2).toStringAsFixed(2)}',
-                    style: GoogleFonts.plusJakartaSans(
+                    '\$${(salon.rating * 1.2).toStringAsFixed(2)}',
+                    style: AppFonts.plusJakartaSans(
                         textStyle: const TextStyle(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.w700)),
                   ),
                 ],
@@ -436,4 +473,35 @@ class _SalonCard extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget _buildSalonImage(String path) {
+  if (path.startsWith('http://') || path.startsWith('https://')) {
+    return Image.network(
+      path,
+      fit: BoxFit.cover,
+      headers: const {'User-Agent': 'Mozilla/5.0'},
+      loadingBuilder: (context, child, progress) {
+        if (progress == null) return child;
+        return Container(color: Colors.grey[300]);
+      },
+      errorBuilder: (context, error, stackTrace) => Container(color: Colors.grey[300]),
+    );
+  }
+  if (path.startsWith('assets/')) {
+    return Image.asset(
+      path,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) => Container(color: Colors.grey[300]),
+    );
+  }
+  final file = File(path);
+  if (file.existsSync()) {
+    return Image.file(
+      file,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) => Container(color: Colors.grey[300]),
+    );
+  }
+  return Container(color: Colors.grey[300]);
 }

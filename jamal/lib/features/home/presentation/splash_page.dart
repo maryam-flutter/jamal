@@ -1,6 +1,6 @@
-import 'dart:math';
+﻿import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../../../core/app_fonts.dart';
 import 'home_page.dart';
 
 class SplashPage extends StatefulWidget {
@@ -104,7 +104,7 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
               children: [
                 Text(
                   'Jamal',
-                  style: GoogleFonts.plusJakartaSans(
+                  style: AppFonts.plusJakartaSans(
                     fontSize: 32,
                     fontWeight: FontWeight.w800,
                     color: Colors.white,
@@ -113,7 +113,7 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
                 const SizedBox(height: 8),
                 Text(
                   'v1.0.0',
-                  style: GoogleFonts.plusJakartaSans(
+                  style: AppFonts.plusJakartaSans(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
                     color: Colors.white.withOpacity(0.8),

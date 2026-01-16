@@ -1,10 +1,11 @@
-import 'dart:ui';
+﻿import 'dart:ui';
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../../../core/app_fonts.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../core/user_session.dart';
+import '../../../core/app_snackbar.dart';
 import '../data/datasources/auth_remote_data_source.dart';
 import '../data/repositories/auth_repository_impl.dart';
 import '../domain/usecases/register_usecase.dart';
@@ -47,8 +48,13 @@ class _RegisterPageState extends State<RegisterPage> {
       _welcomeHeader = t.translate('welcome_header');
       _nameFocusHeader = t.translate('name_focus_header');
       _phoneFocusHeader = t.translate('phone_focus_header');
-      // Initialize _headerMain if it's the first time
-      _headerMain ??= _welcomeHeader;
+      if (_nameFocus.hasFocus) {
+        _headerMain = _nameFocusHeader;
+      } else if (_phoneFocus.hasFocus) {
+        _headerMain = _phoneFocusHeader;
+      } else {
+        _headerMain = _welcomeHeader;
+      }
     }
   }
 
@@ -116,7 +122,7 @@ class _RegisterPageState extends State<RegisterPage> {
         parol: _passCtrl.text,
       );
 
-      await UserSession().saveUser(name, phone);
+      await UserSession().saveUser(name, phone, id: user.id);
 
       if (!mounted) return;
 
@@ -134,9 +140,7 @@ class _RegisterPageState extends State<RegisterPage> {
         message = t.translate('network_error');
       }
       
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message), backgroundColor: Colors.red),
-      );
+      AppSnackBar.show(context, message, style: AppSnackBarStyle.error);
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -172,7 +176,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   alignment: Alignment.topLeft,
                   child: Text(
                     t.translate('register'),
-                    style: GoogleFonts.plusJakartaSans(
+                    style: AppFonts.plusJakartaSans(
                       textStyle: const TextStyle(
                         fontSize: 22,
                         color: Color.fromARGB(255, 10, 10, 10),
@@ -189,7 +193,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     children: [
                       _TypewriterText(
                         text: _headerMain ?? '',
-                        textStyle: GoogleFonts.plusJakartaSans(
+                        textStyle: AppFonts.plusJakartaSans(
                           textStyle: const TextStyle(fontSize: 24, color: Colors.black87, fontWeight: FontWeight.w900, height: 1.08, letterSpacing: 0.2),
                         ),
                         charDuration: const Duration(milliseconds: 32),
@@ -198,7 +202,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       Text(
                         t.translate('create_profile_subheader'),
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.plusJakartaSans(
+                        style: AppFonts.plusJakartaSans(
                           textStyle: const TextStyle(fontSize: 14, color: Colors.black54, fontWeight: FontWeight.w600),
                         ),
                       ),
@@ -457,3 +461,4 @@ class _TypewriterTextState extends State<_TypewriterText> {
 }
 
 // Registration success page moved to `registration_success_page.dart`.
+

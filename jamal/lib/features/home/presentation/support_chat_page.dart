@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+﻿import 'package:flutter/material.dart';
+import '../../../core/app_fonts.dart';
+import '../../../core/app_localizations.dart';
 
 class SupportChatPage extends StatefulWidget {
   const SupportChatPage({Key? key}) : super(key: key);
@@ -15,7 +16,7 @@ class _SupportChatPageState extends State<SupportChatPage> {
   // Boshlang'ich xabarlar ro'yxati
   final List<Map<String, dynamic>> _messages = [
     {
-      'text': 'Assalomu alaykum! Sizga qanday yordam bera olamiz?',
+      'textKey': 'support_chat_welcome',
       'isMe': false,
       'time': '10:00',
     },
@@ -66,20 +67,26 @@ class _SupportChatPageState extends State<SupportChatPage> {
   @override
   Widget build(BuildContext context) {
     const primaryPink = Color(0xFFFF6F91);
-
+    final t = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: isDark ? Colors.black : Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.black, size: 20),
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: isDark ? Colors.white : Colors.black,
+            size: 20,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Yordam xizmati',
-          style: GoogleFonts.plusJakartaSans(
-            color: Colors.black,
+          t.translate('support_chat_title'),
+          style: AppFonts.plusJakartaSans(
+            color: isDark ? Colors.white : Colors.black,
             fontWeight: FontWeight.w700,
             fontSize: 18,
           ),
@@ -96,6 +103,8 @@ class _SupportChatPageState extends State<SupportChatPage> {
               itemBuilder: (context, index) {
                 final msg = _messages[index];
                 final isMe = msg['isMe'] as bool;
+                final textKey = msg['textKey'] as String?;
+                final text = textKey != null ? t.translate(textKey) : (msg['text'] as String);
                 return Align(
                   alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
                   child: Container(
@@ -103,7 +112,7 @@ class _SupportChatPageState extends State<SupportChatPage> {
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
                     decoration: BoxDecoration(
-                      color: isMe ? primaryPink : Colors.white,
+                      color: isMe ? primaryPink : (isDark ? colorScheme.surface : Colors.white),
                       borderRadius: BorderRadius.only(
                         topLeft: const Radius.circular(16),
                         topRight: const Radius.circular(16),
@@ -122,9 +131,9 @@ class _SupportChatPageState extends State<SupportChatPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          msg['text'],
-                          style: GoogleFonts.plusJakartaSans(
-                            color: isMe ? Colors.white : Colors.black87,
+                          text,
+                          style: AppFonts.plusJakartaSans(
+                            color: isMe ? Colors.white : (isDark ? Colors.white70 : Colors.black87),
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
                           ),
@@ -132,8 +141,8 @@ class _SupportChatPageState extends State<SupportChatPage> {
                         const SizedBox(height: 4),
                         Text(
                           msg['time'],
-                          style: GoogleFonts.plusJakartaSans(
-                            color: isMe ? Colors.white70 : Colors.grey[400],
+                          style: AppFonts.plusJakartaSans(
+                            color: isMe ? Colors.white70 : (isDark ? Colors.white38 : Colors.black45),
                             fontSize: 10,
                           ),
                         ),
@@ -147,7 +156,7 @@ class _SupportChatPageState extends State<SupportChatPage> {
           Container(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: isDark ? colorScheme.surface : Colors.white,
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.05),
@@ -161,18 +170,19 @@ class _SupportChatPageState extends State<SupportChatPage> {
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.grey[100],
+                      color: isDark ? const Color(0xFF1F1F1F) : const Color(0xFFF5F5F5),
                       borderRadius: BorderRadius.circular(24),
                     ),
                     child: TextField(
                       controller: _controller,
                       textInputAction: TextInputAction.send,
                       decoration: InputDecoration(
-                        hintText: 'Xabar yozing...',
-                        hintStyle: GoogleFonts.plusJakartaSans(color: Colors.grey[400]),
+                        hintText: t.translate('support_chat_hint'),
+                        hintStyle: AppFonts.plusJakartaSans(color: isDark ? Colors.white38 : Colors.black45),
                         border: InputBorder.none,
                         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                       ),
+                      style: TextStyle(color: isDark ? Colors.white : Colors.black87),
                       onSubmitted: (_) => _sendMessage(),
                     ),
                   ),
@@ -200,3 +210,4 @@ class _SupportChatPageState extends State<SupportChatPage> {
     );
   }
 }
+

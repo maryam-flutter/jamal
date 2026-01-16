@@ -63,8 +63,9 @@ flutter:
 
   # Add app assets (logo). Place your logo at `assets/images/logo.png`.
   assets:
-    - assets/images/
+    - assets/
     - assets/langs/
+   
 
   # To add assets to your application, add an assets section, like this:
   # assets:
